@@ -1,8 +1,8 @@
 
-<H3>ENTER YOUR NAME</H3>
-<H3>ENTER YOUR REGISTER NO.</H3>
+<H3>ENTER YOUR NAME: RAHA PRIYA DHARSHINI M</H3>
+<H3>ENTER YOUR REGISTER NO.: 212224240124</H3>
 <H3>EX. NO.4</H3>
-<H3>DATE:</H3>
+<H3>DATE: 20-08-2026</H3>
 <H1 ALIGN =CENTER>Implementation of MLP with Backpropagation for Multiclassification</H1>
 <H3>Aim:</H3>
 To implement a Multilayer Perceptron for Multi classification
@@ -116,11 +116,117 @@ Normalize our dataset.
 
 <H3>Program:</H3> 
 
-Insert your code here
+```
+import pandas as pd
+import sklearn
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import classification_report, confusion_matrix
 
+# Load dataset
+diabetesdata = pd.read_csv("Dataset of Diabetes.csv")
+
+# Remove extra spaces from column names
+diabetesdata.columns = diabetesdata.columns.str.strip()
+
+# Remove rows with missing values
+diabetesdata = diabetesdata.dropna()
+
+# Clean Gender
+diabetesdata["Gender"] = diabetesdata["Gender"].astype(str).str.strip()
+
+# Clean CLASS
+diabetesdata["CLASS"] = diabetesdata["CLASS"].astype(str).str.strip().str.upper()
+
+# Check classes
+print("Classes:")
+print(diabetesdata["CLASS"].value_counts())
+
+# Encode Gender
+le_gender = preprocessing.LabelEncoder()
+diabetesdata["Gender"] = le_gender.fit_transform(diabetesdata["Gender"])
+
+# Features
+X = diabetesdata[
+    ["Gender", "AGE", "Urea", "Cr", "HbA1c",
+     "Chol", "TG", "HDL", "LDL", "VLDL", "BMI"]
+]
+
+# Target
+y = diabetesdata["CLASS"]
+
+# Encode N, P, Y
+le_class = preprocessing.LabelEncoder()
+y = le_class.fit_transform(y)
+
+print("\nEncoded classes:")
+print(le_class.classes_)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+
+# Feature scaling
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# MLP
+mlp = MLPClassifier(
+    hidden_layer_sizes=(10, 10, 10),
+    max_iter=1000,
+    random_state=42
+)
+
+mlp.fit(X_train, y_train)
+
+# Prediction
+predictions = mlp.predict(X_test)
+
+print("\nPredictions:")
+print(predictions)
+
+# Confusion Matrix
+cm = confusion_matrix(y_test, predictions)
+
+print("\nConfusion Matrix:")
+print(cm)
+
+# Actual vs Predicted
+cm_df = pd.DataFrame(
+    cm,
+    index=["Actual N", "Actual P", "Actual Y"],
+    columns=["Predicted N", "Predicted P", "Predicted Y"]
+)
+
+print("\nActual vs Predicted:")
+print(cm_df)
+
+# Classification Report
+print("\nClassification Report:")
+print(
+    classification_report(
+        y_test,
+        predictions,
+        target_names=le_class.classes_
+    )
+)
+
+
+```
 <H3>Output:</H3>
 
-Show your results here
+<img width="1122" height="830" alt="image" src="https://github.com/user-attachments/assets/51523e14-64bd-4d3a-ab16-d01c2587e042" />
+
+
 
 <H3>Result:</H3>
 Thus, MLP is implemented for multi-classification using python.
